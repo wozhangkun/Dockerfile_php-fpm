@@ -16,7 +16,7 @@ RUN \
     && git clone $PHP_URL >/dev/null \
     && cd php-src \
     && git branch $PHP_v \
-    && ./bulidconf \
+    && ./buildconf \
     && ./configure --prefix=${PHP_DIR} \
             --with-config-file-path=${PHP_DIR}/etc \
             --enable-fpm \
