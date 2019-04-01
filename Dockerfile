@@ -27,11 +27,11 @@ RUN \
             --with-libdir=lib64 \
             --with-mysqli=mysqlnd \
             --with-pdo-mysql=mysqlnd \
-#            --with-freetype-dir \
-#            --with-jpeg-dir \
-#            --with-png-dir \
+            --with-freetype-dir \
+            --with-jpeg-dir \
+            --with-png-dir \
             --with-iconv-dir \
-#            --with-mcrypt \
+            --with-mcrypt \
             --with-zlib \
             --with-libxml-dir \
             --enable-xml \
@@ -44,14 +44,14 @@ RUN \
             --with-curl \
             --enable-mbregex \
             --enable-mbstring \
-#            --with-gd \
+            --with-gd \
             --with-openssl \
             --with-openssl \
             --with-mhash \
             --enable-pcntl \
             --enable-sockets \
             --enable-bcmath \
-#            --enable-wddx \
+            --enable-wddx \
             --with-xmlrpc \
             --enable-soap \
             --enable-zip \
@@ -61,7 +61,7 @@ RUN \
             --disable-debug \
             --disable-ipv6 \
             --enable-ftp \
-#            --disable-maintainer-zts \
+            --disable-maintainer-zts \
             --enable-fileinfo \
       && make >dev/null \
       && make install >/dev/null \ 
