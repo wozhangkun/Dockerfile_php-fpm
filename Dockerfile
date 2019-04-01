@@ -115,7 +115,7 @@ RUN \
       \
 ######################################################################################move install file
       && cd \
-      && rm -rf /tmp/php-src
+      && rm -rf /tmp/php*
 
 VOLUME ["/var/www/html"]
 
