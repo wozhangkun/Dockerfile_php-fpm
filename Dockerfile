@@ -15,7 +15,7 @@ RUN \
     && cd /tmp \
     && wget -O php.tar.gz $PHP_URL >/dev/null \
     && mkdir php \
-    && tar -xf php.tar.gz -C php -strip-components=1 \
+    && tar -xf php.tar.gz -C php --strip-components=1 \
     && cd php \
     && ./configure --prefix=${PHP_DIR} \
             --with-config-file-path=${PHP_DIR}/etc \
