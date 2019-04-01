@@ -10,10 +10,10 @@ ENV PHP_DIR /usr/local/${PHP_v}
 ###########################################################################################Install $PHP_v
 RUN \
      useradd -s /sbin/nologin $PHP_USER \
-    && yum -y install epel-release >/dev/null\
-    && yum -y install wget gcc gcc-c++ m4 autoconf libtool bison bison-devel zlib-devel libxml2-devel libjpeg-devel libjpeg-turbo-devel freetype-devel libpng-devel libcurl-devel libxslt-devel libmcrypt libmcrypt-devel mcrypt sqlite-devel libevent-devel mhash-devel pcre-devel bzip2-devel curl-devel openssl-devel bison-devel php-devel pcre-devel make re2c php-mysql >/dev/null \
+    && yum -y install epel-release \
+    && yum -y install wget gcc gcc-c++ m4 autoconf libtool bison bison-devel zlib-devel libxml2-devel libjpeg-devel libjpeg-turbo-devel freetype-devel libpng-devel libcurl-devel libxslt-devel libmcrypt libmcrypt-devel mcrypt sqlite-devel libevent-devel mhash-devel pcre-devel bzip2-devel curl-devel openssl-devel bison-devel php-devel pcre-devel make re2c php-mysql \
     && cd /tmp \
-    && wget -O php.tar.gz $PHP_URL >/dev/null \
+    && wget -O php.tar.gz $PHP_URL \
     && mkdir php \
     && tar -xf php.tar.gz -C php --strip-components=1 \
     && cd php \
@@ -63,8 +63,8 @@ RUN \
             --enable-ftp \
             --disable-maintainer-zts \
             --enable-fileinfo \
-      && make >dev/null \
-      && make install >/dev/null \ 
+      && make \
+      && make install \ 
       \
       && ln -s ${PHP_DIR} /usr/local/php \ 
       && ln -s ${PHP_DIR}/bin/* /usr/local/bin/ \
@@ -103,14 +103,14 @@ RUN \
       && sed -i "s,;error_log = php_errors.log,error_log = ${PHP_DIR}/var/log/php-fpm.log,g" ${PHP_DIR}/etc/php-fpm.conf \
       \
 ######################################################################################Configure php-ext
-      && wget -O redis.tar.gz $PECL_REDIS_URL >/dev/null \
+      && wget -O redis.tar.gz $PECL_REDIS_URL \
       && mkdir redis \
       && tar -xf redis.tar.gz -C redis --strip-components=1 \
       && cd redis \
-      && ${PHP_DIR}/bin/phpize > /dev/null \
+      && ${PHP_DIR}/bin/phpize \
       && ./configure --with-php-config=${PHP_DIR}/bin/php-config \
-      && make >/dve/null \
-      && make install >/dev/null \
+      && make \
+      && make install \
       && echo -e "extension=redis.so" >> ${PHP_DIR}/etc/php.ini \
       \
 ######################################################################################move install file
