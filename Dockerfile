@@ -7,9 +7,9 @@ COPY composer /usr/local/bin/
 RUN chmod a+x /usr/local/bin/composer
 ######################################################################################Configure php-ext
 RUN \
-      cd /tmp
+      cd /tmp \
 #############install mongodb.so
-      /usr/local/php/bin/pecl install mongodb >/dev/null \
+      && /usr/local/php/bin/pecl install mongodb >/dev/null \
       && echo -e "extension=mongodb.so" >> /usr/local/php/etc/php.ini \
       \
 #############install phalcon.so
@@ -44,3 +44,9 @@ RUN \
       && cd \
       && rm -rf /tmp/cphalcon \
       && yum clean all
+
+EXPOSE 9000
+
+WORKDIR /var/www/html
+
+CMD ["/usr/local/php/sbin/php-fpm","--nodaemonize","--fpm-config","/usr/local/php/etc/php-fpm.conf"]
