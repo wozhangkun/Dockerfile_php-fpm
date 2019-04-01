@@ -11,7 +11,7 @@ ENV PHP_DIR /usr/local/${PHP_v}
 RUN \
      useradd -s /sbin/nologin $PHP_USER \
     && yum -y install epel-release \
-    && yum -y install wget gcc gcc-c++ m4 autoconf libtool bison bison-devel zlib-devel libxml2-devel libjpeg-devel libjpeg-turbo-devel freetype-devel libpng-devel libcurl-devel libxslt-devel libmcrypt libmcrypt-devel mcrypt sqlite-devel libevent-devel mhash-devel pcre-devel bzip2-devel curl-devel openssl-devel bison-devel php-devel pcre-devel make re2c php-mysql \
+    && yum -y install git wget gcc gcc-c++ m4 autoconf libtool bison bison-devel zlib-devel libxml2-devel libjpeg-devel libjpeg-turbo-devel freetype-devel libpng-devel libcurl-devel libxslt-devel libmcrypt libmcrypt-devel mcrypt sqlite-devel libevent-devel mhash-devel pcre-devel bzip2-devel curl-devel openssl-devel bison-devel php-devel pcre-devel make re2c php-mysql \
     && cd /tmp \
     && wget -O php.tar.gz $PHP_URL \
     && mkdir php \
@@ -115,7 +115,8 @@ RUN \
       \
 ######################################################################################move install file
       && cd \
-      && rm -rf /tmp/php*
+      && rm -rf /tmp/php* \
+      && yum clean all
 
 VOLUME ["/var/www/html"]
 
