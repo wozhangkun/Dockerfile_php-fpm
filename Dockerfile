@@ -1,11 +1,11 @@
 FROM centos
 
-ENV PHP_URL https://www.php.net/distributions/php-7.0.33.tar.gz
-ENV PECL_REDIS_URL http://pecl.php.net/get/redis-4.3.0.tgz
-
 ENV PHP_v php-7.0.33
 ENV PHP_USER www-data
 ENV PHP_DIR /usr/local/${PHP_v}
+
+ENV PHP_URL https://www.php.net/distributions/${PHP_v}.tar.gz
+ENV PECL_REDIS_URL http://pecl.php.net/get/redis-4.3.0.tgz
 
 ###########################################################################################Install $PHP_v
 RUN \
