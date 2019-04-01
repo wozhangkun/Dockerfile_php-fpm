@@ -14,7 +14,7 @@ RUN \
       \
  #############install phalcon.so depend on psr.so
       && /usr/local/php/bin/pecl install psr \
-      && echo -e "extension=psr.so" >> ${PHP_DIR}/etc/php.ini \
+      && echo -e "extension=psr.so" >> /usr/local/php/etc/php.ini \
       \
 #############install phalcon.so
       && git clone https://github.com/phalcon/cphalcon.git  \
