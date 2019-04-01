@@ -43,5 +43,4 @@ RUN \
       ######################################################################################move install file
       && cd \
       && rm -rf /tmp/cphalcon \
-      && yum clean all \
-      && rm -rf /var/cache/yum
+      && yum clean all
