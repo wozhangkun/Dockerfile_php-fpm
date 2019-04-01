@@ -1,6 +1,6 @@
 FROM centos
 
-ENV PHP_URL http://cn2.php.net/distributions/php-7.0.33.tar.gz
+ENV PHP_URL http://us1.php.net/distributions/php-7.0.33.tar.gz
 ENV PECL_REDIS_URL http://pecl.php.net/get/redis-4.3.0.tgz
 
 ENV PHP_v php-7.0.33
