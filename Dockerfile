@@ -1,21 +1,22 @@
 FROM centos
-ENV PHP_v PHP-7.0.33
+
+ENV PHP_URL http://cn2.php.net/distributions/php-7.0.33.tar.gz
+ENV PECL_REDIS_URL http://pecl.php.net/get/redis-4.3.0.tgz
+
+ENV PHP_v php-7.0.33
 ENV PHP_USER www-data
 ENV PHP_DIR /usr/local/${PHP_v}
-
-ENV PHP_URL https://github.com/php/php-src.git
-ENV PECL_REDIS_URL http://pecl.php.net/get/redis-4.3.0.tgz 
 
 ###########################################################################################Install $PHP_v
 RUN \
      useradd -s /sbin/nologin $PHP_USER \
     && yum -y install epel-release >/dev/null\
-    && yum -y install git wget gcc gcc-c++ m4 autoconf libtool bison bison-devel zlib-devel libxml2-devel libjpeg-devel libjpeg-turbo-devel freetype-devel libpng-devel libcurl-devel libxslt-devel libmcrypt libmcrypt-devel mcrypt postgresql-devel libevent-devel mhash-devel pcre-devel bzip2-devel curl-devel openssl-devel bison-devel php-devel pcre-devel make re2c php-mysql >/dev/null \
+    && yum -y install wget gcc gcc-c++ m4 autoconf libtool bison bison-devel zlib-devel libxml2-devel libjpeg-devel libjpeg-turbo-devel freetype-devel libpng-devel libcurl-devel libxslt-devel libmcrypt libmcrypt-devel mcrypt sqlite-devel libevent-devel mhash-devel pcre-devel bzip2-devel curl-devel openssl-devel bison-devel php-devel pcre-devel make re2c php-mysql >/dev/null \
     && cd /tmp \
-    && git clone $PHP_URL >/dev/null \
-    && cd php-src \
-    && git branch $PHP_v \
-    && ./buildconf \
+    && wget -O php.tar.gz $PHP_URL >/dev/null \
+    && mkdir php \
+    && tar -xf php.tar.gz -C php -strip-components=1 \
+    && cd php \
     && ./configure --prefix=${PHP_DIR} \
             --with-config-file-path=${PHP_DIR}/etc \
             --enable-fpm \
