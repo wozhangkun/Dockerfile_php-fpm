@@ -10,7 +10,7 @@ ENV PECL_REDIS_URL http://pecl.php.net/get/redis-4.3.0.tgz
 RUN \
      useradd -s /sbin/nologin $PHP_USER \
     && yum -y install epel-release >/dev/null\
-    && yum -y install git wget gcc gcc-c++ m4 autoconf libtool bison bison-devel zlib-devel libxml2-devel libjpeg-devel libjpeg-turbo-devel freetype-devel libpng-devel libcurl-devel libxslt-devel libmcrypt libmcrypt-devel mcrypt libevent-devel mhash-devel pcre-devel bzip2-devel curl-devel openssl-devel bison-devel php-devel pcre-devel make re2c php-mysql >/dev/null \
+    && yum -y install git wget gcc gcc-c++ m4 autoconf libtool bison bison-devel zlib-devel libxml2-devel libjpeg-devel libjpeg-turbo-devel freetype-devel libpng-devel libcurl-devel libxslt-devel libmcrypt libmcrypt-devel mcrypt postgresql-devel libevent-devel mhash-devel pcre-devel bzip2-devel curl-devel openssl-devel bison-devel php-devel pcre-devel make re2c php-mysql >/dev/null \
     && cd /tmp \
     && git clone $PHP_URL >/dev/null \
     && cd php-src \
@@ -26,11 +26,11 @@ RUN \
             --with-libdir=lib64 \
             --with-mysqli=mysqlnd \
             --with-pdo-mysql=mysqlnd \
-            --with-freetype-dir \
-            --with-jpeg-dir \
-            --with-png-dir \
+#            --with-freetype-dir \
+#            --with-jpeg-dir \
+#            --with-png-dir \
             --with-iconv-dir \
-            --with-mcrypt \
+#            --with-mcrypt \
             --with-zlib \
             --with-libxml-dir \
             --enable-xml \
@@ -43,14 +43,14 @@ RUN \
             --with-curl \
             --enable-mbregex \
             --enable-mbstring \
-            --with-gd \
+#            --with-gd \
             --with-openssl \
             --with-openssl \
             --with-mhash \
             --enable-pcntl \
             --enable-sockets \
             --enable-bcmath \
-            --enable-wddx \
+#            --enable-wddx \
             --with-xmlrpc \
             --enable-soap \
             --enable-zip \
@@ -60,7 +60,7 @@ RUN \
             --disable-debug \
             --disable-ipv6 \
             --enable-ftp \
-            --disable-maintainer-zts \
+#            --disable-maintainer-zts \
             --enable-fileinfo \
       && make >dev/null \
       && make install >/dev/null \ 
