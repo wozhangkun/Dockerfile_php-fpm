@@ -9,44 +9,38 @@ RUN chmod a+x /usr/local/bin/composer
 RUN \
       cd /tmp \
 #############install mongodb.so
-      && /usr/local/php/bin/pecl install mongodb >/dev/null \
-      && echo -e "extension=mongodb.so" >> /usr/local/php/etc/php.ini \
+      && ${PHP_DIR}/bin/pecl install mongodb \
+      && echo -e "extension=mongodb.so" >> ${PHP_DIR}/etc/php.ini \
       \
 #############install phalcon.so
-      && git clone https://github.com/phalcon/cphalcon.git >/dev/null \
+      && git clone https://github.com/phalcon/cphalcon.git \
       && cd cphalcon/build \
-      && ./install --phpize /usr/local/php/bin/phpize --php-config /usr/local/php/bin/php-config >/dev/null \
-      && echo -e "extension=phalcon.so" >> /usr/local/php/etc/php.ini \
+      && ./install --phpize ${PHP_DIR}/bin/phpize --php-config ${PHP_DIR}/bin/php-config \
+      && echo -e "extension=phalcon.so" >> ${PHP_DIR}/etc/php.ini \
       \
 #############install swoole.so
-      && wget -O swoole.tar.gz $PECL_SWOOLE_URL >/dev/null \
+      && wget -O swoole.tar.gz $PECL_SWOOLE_URL \
       && mkdir swoole \
       && tar -xf swoole.tar.gz -C swoole --strip-components=1 \
       && cd swoole \
-      && /usr/local/php/bin/phpize > /dev/null \
-      && ./configure --with-php-config=/usr/local/php/bin/php-config --enable-openssl --enable-http2 --enable-thread --enable-swoole \
-      && make >/dve/null \
-      && make install >/dev/null \
-      && echo -e "extension=swoole.so" >> /usr/local/php/etc/php.ini \
+      && ${PHP_DIR}/bin/phpize \
+      && ./configure --with-php-config=${PHP_DIR}/bin/php-config --enable-openssl --enable-http2 --enable-thread --enable-swoole \
+      && make \
+      && make install \
+      && echo -e "extension=swoole.so" >> ${PHP_DIR}/etc/php.ini \
       \
 #############install event.so
-      && wget -O event.tar.gz $PECL_EVENT_URL >/dev/null \
+      && wget -O event.tar.gz $PECL_EVENT_URL \
       && mkdir event \
       && tar -xf event.tar.gz -C event --strip-components=1 \
       && cd event \
-      && /usr/local/php/bin/phpize > /dev/null \
-      && ./configure --with-php-config=/usr/local/php/bin/php-config --with-event-core --with-event-extra \
-      && make >/dve/null \
-      && make install >/dev/null \
-      && echo -e "extension=event.so" >> /usr/local/php/etc/php.ini \
+      && ${PHP_DIR}/bin/phpize > \
+      && ./configure --with-php-config=${PHP_DIR}/bin/php-config --with-event-core --with-event-extra \
+      && make \
+      && make install \
+      && echo -e "extension=event.so" >> ${PHP_DIR}/etc/php.ini \
       \
       ######################################################################################move install file
       && cd \
       && rm -rf /tmp/cphalcon \
       && yum clean all
-
-EXPOSE 9000
-
-WORKDIR /var/www/html
-
-CMD ["/usr/local/php/sbin/php-fpm","--nodaemonize","--fpm-config","/usr/local/php/etc/php-fpm.conf"]
