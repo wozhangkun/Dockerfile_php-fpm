@@ -1,6 +1,6 @@
 FROM centos
 
-ENV PHP_v php-7.0.33
+ENV PHP_v php-7.1.27
 ENV PHP_USER www-data
 ENV PHP_DIR /usr/local/${PHP_v}
 
