@@ -1,4 +1,4 @@
-FROM wozhangkun/php-fpm:7.0.33
+FROM wozhangkun/php-fpm:7.1.27
 
 ENV PECL_SWOOLE_URL http://pecl.php.net/get/swoole-4.3.1.tgz
 #ENV PECL_EVENT_URL http://pecl.php.net/get/event-2.4.3.tgz
