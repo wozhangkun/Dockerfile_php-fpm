@@ -101,6 +101,8 @@ RUN \
       && sed -i 's,^pm.start_servers = 2,pm.start_servers = 20,g'   ${PHP_DIR}/etc/php-fpm.d/www.conf \
       && sed -i 's,;pid = run/php-fpm.pid,pid = run/php-fpm.pid,g'   ${PHP_DIR}/etc/php-fpm.conf \
       && sed -i "s,;error_log = php_errors.log,error_log = ${PHP_DIR}/var/log/php-fpm.log,g" ${PHP_DIR}/etc/php-fpm.conf \
+#Php-fpm and nginx continue to listen for all ips when they are not in the same container
+      && sed -i 's,^listen = 127.0.0.1:9000,listen = 9000,g' ${PHP_DIR}/etc/php-fpm.d/www.conf \
       \
 ######################################################################################Configure php-ext
       && wget -O redis.tar.gz $PECL_REDIS_URL \
