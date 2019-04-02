@@ -1,7 +1,7 @@
 FROM wozhangkun/php-fpm:7.0.33
 
 ENV PECL_SWOOLE_URL http://pecl.php.net/get/swoole-4.3.1.tgz
-ENV PECL_EVENT_URL http://pecl.php.net/get/event-2.4.3.tgz
+#ENV PECL_EVENT_URL http://pecl.php.net/get/event-2.4.3.tgz
 ######################################################################################Copy composer
 COPY composer /usr/local/bin/
 RUN chmod a+x /usr/local/bin/composer
@@ -33,17 +33,17 @@ RUN \
       && make install  \
       && echo -e "extension=swoole.so" >> /usr/local/php/etc/php.ini \
       \
-#############install event.so
-      && wget -O event.tar.gz $PECL_EVENT_URL  \
-      && mkdir event \
-      && tar -xf event.tar.gz -C event --strip-components=1 \
-      && cd event \
-      && /usr/local/php/bin/phpize > /dev/null \
-      && ./configure --with-php-config=/usr/local/php/bin/php-config --with-event-core --with-event-extra \
-      && make \
-      && make install \
-      && echo -e "extension=event.so" >> /usr/local/php/etc/php.ini \
-      \
+#############install event.so (RCC Requirements >=PHP 7.2)
+#      && wget -O event.tar.gz $PECL_EVENT_URL  \
+#      && mkdir event \
+#      && tar -xf event.tar.gz -C event --strip-components=1 \
+#      && cd event \
+#      && /usr/local/php/bin/phpize > /dev/null \
+#      && ./configure --with-php-config=/usr/local/php/bin/php-config --with-event-core --with-event-extra \
+#      && make \
+#      && make install \
+#      && echo -e "extension=event.so" >> /usr/local/php/etc/php.ini \
+#      \
       ######################################################################################move install file
       && cd \
       && rm -rf /tmp/cphalcon \
