@@ -1,22 +1,22 @@
 FROM centos
-ENV PHP_v PHP-7.0.33
-ENV PHP_URL https://github.com/php/php-src.git
+
+ENV PHP_v php-7.0.33
 ENV PHP_USER www-data
 ENV PHP_DIR /usr/local/${PHP_v}
 
-COPY composer /usr/local/bin/
+ENV PHP_URL https://www.php.net/distributions/${PHP_v}.tar.gz
+ENV PECL_REDIS_URL http://pecl.php.net/get/redis-4.3.0.tgz
 
-#Install $PHP_v
-
+###########################################################################################Install $PHP_v
 RUN \
      useradd -s /sbin/nologin $PHP_USER \
-    && yum -y install epel-release >/dev/null\
-    && yum -y install git gcc gcc-c++ m4 autoconf libtool bison bison-devel zlib-devel libxml2-devel libjpeg-devel libjpeg-turbo-devel freetype-devel libpng-devel libcurl-devel libxslt-devel libmcrypt libmcrypt-devel mcrypt libevent-devel mhash-devel pcre-devel bzip2-devel curl-devel openssl-devel bison-devel php-devel pcre-devel make re2c php-mysql >/dev/null \
+    && yum -y install epel-release \
+    && yum -y install git wget gcc gcc-c++ m4 autoconf libtool bison bison-devel zlib-devel libxml2-devel libjpeg-devel libjpeg-turbo-devel freetype-devel libpng-devel libcurl-devel libxslt-devel libmcrypt libmcrypt-devel mcrypt sqlite-devel libevent-devel mhash-devel pcre-devel bzip2-devel curl-devel openssl-devel bison-devel php-devel pcre-devel make re2c php-mysql \
     && cd /tmp \
-    && git clone $PHP_URL >/dev/null \
-    && cd php-src \
-    && git branch $PHP_v \
-    && ./buildconf \
+    && wget -O php.tar.gz $PHP_URL \
+    && mkdir php \
+    && tar -xf php.tar.gz -C php --strip-components=1 \
+    && cd php \
     && ./configure --prefix=${PHP_DIR} \
             --with-config-file-path=${PHP_DIR}/etc \
             --enable-fpm \
@@ -30,6 +30,8 @@ RUN \
             --with-freetype-dir \
             --with-jpeg-dir \
             --with-png-dir \
+            --with-iconv-dir \
+            --with-mcrypt \
             --with-zlib \
             --with-libxml-dir \
             --enable-xml \
@@ -43,6 +45,7 @@ RUN \
             --enable-mbregex \
             --enable-mbstring \
             --with-gd \
+            --with-openssl \
             --with-openssl \
             --with-mhash \
             --enable-pcntl \
@@ -60,12 +63,13 @@ RUN \
             --enable-ftp \
             --disable-maintainer-zts \
             --enable-fileinfo \
-      && make >dev/null \
-      && make install >/dev/null \ 
+      && make \
+      && make install \ 
       \
       && ln -s ${PHP_DIR} /usr/local/php \ 
       && ln -s ${PHP_DIR}/bin/* /usr/local/bin/ \
       && ln -s ${PHP_DIR}/sbin/* /usr/local/sbin/ \
+######################################################################################Configure php.ini
       \
       && cp -rf php.ini-production ${PHP_DIR}/etc/php.ini \
       && extension_dir=`${PHP_DIR}/bin/php -i | grep '^extension_dir' | awk '{print $NF}'` \
@@ -77,6 +81,7 @@ RUN \
       && sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' ${PHP_DIR}/etc/php.ini \
       && sed -i 's/max_execution_time = 30/max_execution_time = 300/g' ${PHP_DIR}/etc/php.ini \
       \
+######################################################################################Configure php Cache
       && sed -i 's/;opcache.enable=0/opcache.enable=1/g' ${PHP_DIR}/etc/php.ini \
       && sed -i 's/;opcache.memory_consumption=64/opcache.memory_consumption=128/g' ${PHP_DIR}/etc/php.ini \
       && sed -i 's/;opcache.interned_strings_buffer=4/opcache.interned_strings_buffer=8/g' ${PHP_DIR}/etc/php.ini \
@@ -84,7 +89,9 @@ RUN \
       && sed -i 's/;opcache.revalidate_freq=2/opcache.revalidate_freq=60/g' ${PHP_DIR}/etc/php.ini \
       && sed -i 's/;opcache.fast_shutdown=0/opcache.fast_shutdown=1/g' ${PHP_DIR}/etc/php.ini \
       && sed -i 's/;opcache.enable_cli=0/opcache.enable_cli=1/g' ${PHP_DIR}/etc/php.ini \
+      && echo -e "zend_extension=opcache.so" >> ${PHP_DIR}/etc/php.ini \
       \
+######################################################################################Configure php-fpm
       && cp -rf ${PHP_DIR}/etc/php-fpm.conf.default ${PHP_DIR}/etc/php-fpm.conf \
       && mv ${PHP_DIR}/etc/php-fpm.d/www.conf.default ${PHP_DIR}/etc/php-fpm.d/www.conf \
       && sed -i 's,;pm.max_requests = 500,pm.max_requests = 3000,g' ${PHP_DIR}/etc/php-fpm.d/www.conf \
@@ -94,26 +101,29 @@ RUN \
       && sed -i 's,^pm.start_servers = 2,pm.start_servers = 20,g'   ${PHP_DIR}/etc/php-fpm.d/www.conf \
       && sed -i 's,;pid = run/php-fpm.pid,pid = run/php-fpm.pid,g'   ${PHP_DIR}/etc/php-fpm.conf \
       && sed -i "s,;error_log = php_errors.log,error_log = ${PHP_DIR}/var/log/php-fpm.log,g" ${PHP_DIR}/etc/php-fpm.conf \
+#Php-fpm and nginx continue to listen for all ips when they are not in the same container
+      && sed -i 's,^listen = 127.0.0.1:9000,listen = 9000,g' ${PHP_DIR}/etc/php-fpm.d/www.conf \
       \
-      && ${PHP_DIR}/bin/pecl install mcrypt event mongodb redis swoole >/dev/null \
-      && git clone https://github.com/phalcon/cphalcon.git >/dev/null \
-      && cd cphalcon/build \
-      && ./install --phpize ${PHP_DIR}/bin/phpize --php-config ${PHP_DIR}/bin/php-config >/dev/null \
-      && echo -e "extension=phalcon.so\nextension=event.so\nextension=mongodb.so\nextension=mcrypt.so\nextension=redis.so\nextension=swoole.so\nzend_extension=opcache.so" >> ${PHP_DIR}/etc/php.ini \
+######################################################################################Configure php-ext
+      && wget -O redis.tar.gz $PECL_REDIS_URL \
+      && mkdir redis \
+      && tar -xf redis.tar.gz -C redis --strip-components=1 \
+      && cd redis \
+      && ${PHP_DIR}/bin/phpize \
+      && ./configure --with-php-config=${PHP_DIR}/bin/php-config \
+      && make \
+      && make install \
+      && echo -e "extension=redis.so" >> ${PHP_DIR}/etc/php.ini \
+      \
+######################################################################################move install file
       && cd \
-      && rm -rf /tmp/php-src \
-      \
-      && mkdir -p /var/www/html \
-      && chown www-data:www-data /var/www/html \
-      && chmod 777 /var/www/html \
-      \
-      && chmod a+x /usr/local/bin/composer \
-      && composer self-update
+      && rm -rf /tmp/php* \
+      && yum clean all
 
 VOLUME ["/var/www/html"]
 
 EXPOSE 9000
 
-WORKDIR /usr/local/php
+WORKDIR /var/www/html
 
 CMD ["/usr/local/php/sbin/php-fpm","--nodaemonize","--fpm-config","/usr/local/php/etc/php-fpm.conf"]
