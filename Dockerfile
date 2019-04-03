@@ -7,10 +7,30 @@ ENV PHP_DIR /usr/local/${PHP_v}
 ENV PHP_URL https://www.php.net/distributions/${PHP_v}.tar.gz
 ENV PECL_REDIS_URL http://pecl.php.net/get/redis-4.3.0.tgz
 ENV PECL_MCRYPT_URL https://pecl.php.net/get/mcrypt-1.0.2.tgz
-
+ENV LIBZIP_URL https://libzip.org/download/libzip-1.5.2.tar.gz
+###########################################################################################Install libzip
+#Install cmake.libzip uses cmake to build.
+COPY cmake-3.14.1.tar.gz /tmp
+RUN \
+    cd /tmp \
+    && tar -xf cmake-3.14.1.tar.gz \
+    && cd cmake-3.14.1 \
+    && ./configure \
+    && make \
+    && make install \
+#Install libzip
+    && wget -O libzip.tar.gz $LIBZIP_URL \
+    && mkdir libzip \
+    && tar -xf libzip.tar.gz  -C libzip --strip-components=1 \
+    && cd libzip \
+    && mkdir build \
+    && cd build \
+    && cmake .. \
+    && make \
+    && make install
 ###########################################################################################Install $PHP_v
 RUN \
-     useradd -s /sbin/nologin $PHP_USER \
+    useradd -s /sbin/nologin $PHP_USER \
     && yum -y install epel-release \
     && yum -y install git wget gcc gcc-c++ m4 autoconf libtool bison bison-devel zlib-devel libxml2-devel libjpeg-devel libjpeg-turbo-devel freetype-devel libpng-devel libcurl-devel libxslt-devel libmcrypt libmcrypt-devel mcrypt sqlite-devel libevent-devel mhash-devel pcre-devel bzip2-devel curl-devel openssl-devel bison-devel php-devel pcre-devel make re2c php-mysql \
     && cd /tmp \
