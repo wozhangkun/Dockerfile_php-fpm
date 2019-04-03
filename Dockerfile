@@ -37,6 +37,11 @@ RUN \
     && make install \
     && cd /tmp \
     && rm -rf cmake-3.14.1* \
+    \
+#add lib path
+    && echo -e '/usr/local/lib64\n/usr/local/lib\n/usr/lib\n/usr/lib64'>>/etc/ld.so.conf \
+    && ldconfig -v \
+    \
 #Install PHP
     && wget -O php.tar.gz $PHP_URL \
     && mkdir php \
