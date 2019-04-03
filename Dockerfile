@@ -40,7 +40,7 @@ RUN \
     \
 #add lib path
     && echo -e '/usr/local/lib64\n/usr/local/lib\n/usr/lib\n/usr/lib64'>>/etc/ld.so.conf \
-    && ldconfig -v \
+    && ldconfig \
     \
 #Install PHP
     && wget -O php.tar.gz $PHP_URL \
