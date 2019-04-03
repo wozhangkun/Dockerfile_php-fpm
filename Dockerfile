@@ -13,7 +13,7 @@ ENV LIBZIP_URL https://libzip.org/download/libzip-1.5.2.tar.gz
 COPY cmake-3.14.1.tar.gz /tmp
 RUN \
     cd /tmp \
-    && yum -y install gcc gcc-c++ make \
+    && yum -y install gcc gcc-c++ make wget \
     && tar -xf cmake-3.14.1.tar.gz \
     && cd cmake-3.14.1 \
     && ./configure \
@@ -54,7 +54,6 @@ RUN \
             --with-freetype-dir \
             --with-jpeg-dir \
             --with-png-dir \
-            --with-iconv-dir \
             --with-zlib \
             --with-libxml-dir \
             --enable-xml \
