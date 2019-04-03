@@ -13,6 +13,7 @@ ENV LIBZIP_URL https://libzip.org/download/libzip-1.5.2.tar.gz
 COPY cmake-3.14.1.tar.gz /tmp
 RUN \
     cd /tmp \
+    && yum -y install gcc gcc-c++ \
     && tar -xf cmake-3.14.1.tar.gz \
     && cd cmake-3.14.1 \
     && ./configure \
@@ -27,7 +28,9 @@ RUN \
     && cd build \
     && cmake .. \
     && make \
-    && make install
+    && make install \
+    && cd /tmp \
+    && rm -rf cmake-3.14.1*
 ###########################################################################################Install $PHP_v
 RUN \
     useradd -s /sbin/nologin $PHP_USER \
