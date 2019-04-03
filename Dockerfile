@@ -11,14 +11,20 @@ ENV LIBZIP_URL https://libzip.org/download/libzip-1.5.2.tar.gz
 ###########################################################################################Install libzip
 #Install cmake.libzip uses cmake to build.
 COPY cmake-3.14.1.tar.gz /tmp
+###########################################################################################Install $PHP_v
 RUN \
-    cd /tmp \
-    && yum -y install gcc gcc-c++ make wget \
+    useradd -s /sbin/nologin $PHP_USER \
+    && yum -y install epel-release \
+    && yum -y install git wget gcc gcc-c++ m4 autoconf libtool bison bison-devel zlib-devel libxml2-devel libjpeg-devel libjpeg-turbo-devel freetype-devel libpng-devel libcurl-devel libxslt-devel libmcrypt libmcrypt-devel mcrypt sqlite-devel libevent-devel mhash-devel pcre-devel bzip2-devel curl-devel openssl-devel bison-devel php-devel pcre-devel make re2c php-mysql \
+    && cd /tmp \
+    \
+#Install cmake   
     && tar -xf cmake-3.14.1.tar.gz \
     && cd cmake-3.14.1 \
     && ./configure \
     && make \
     && make install \
+    \
 #Install libzip
     && wget -O libzip.tar.gz $LIBZIP_URL \
     && mkdir libzip \
@@ -30,13 +36,8 @@ RUN \
     && make \
     && make install \
     && cd /tmp \
-    && rm -rf cmake-3.14.1*
-###########################################################################################Install $PHP_v
-RUN \
-    useradd -s /sbin/nologin $PHP_USER \
-    && yum -y install epel-release \
-    && yum -y install git wget gcc gcc-c++ m4 autoconf libtool bison bison-devel zlib-devel libxml2-devel libjpeg-devel libjpeg-turbo-devel freetype-devel libpng-devel libcurl-devel libxslt-devel libmcrypt libmcrypt-devel mcrypt sqlite-devel libevent-devel mhash-devel pcre-devel bzip2-devel curl-devel openssl-devel bison-devel php-devel pcre-devel make re2c php-mysql \
-    && cd /tmp \
+    && rm -rf cmake-3.14.1* \
+#Install PHP
     && wget -O php.tar.gz $PHP_URL \
     && mkdir php \
     && tar -xf php.tar.gz -C php --strip-components=1 \
