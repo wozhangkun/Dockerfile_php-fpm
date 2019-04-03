@@ -6,6 +6,7 @@ ENV PHP_DIR /usr/local/${PHP_v}
 
 ENV PHP_URL https://www.php.net/distributions/${PHP_v}.tar.gz
 ENV PECL_REDIS_URL http://pecl.php.net/get/redis-4.3.0.tgz
+ENV PECL_MCRYPT_URL https://pecl.php.net/get/mcrypt-1.0.2.tgz
 
 ###########################################################################################Install $PHP_v
 RUN \
@@ -31,7 +32,6 @@ RUN \
             --with-jpeg-dir \
             --with-png-dir \
             --with-iconv-dir \
-            --with-mcrypt \
             --with-zlib \
             --with-libxml-dir \
             --enable-xml \
@@ -55,6 +55,7 @@ RUN \
             --with-xmlrpc \
             --enable-soap \
             --enable-zip \
+            --with-libzip \
             --enable-short-tags \
             --enable-static \
             --with-xsl \
@@ -105,6 +106,7 @@ RUN \
       && sed -i 's,^listen = 127.0.0.1:9000,listen = 9000,g' ${PHP_DIR}/etc/php-fpm.d/www.conf \
       \
 ######################################################################################Configure php-ext
+#INSTALL REDIS
       && wget -O redis.tar.gz $PECL_REDIS_URL \
       && mkdir redis \
       && tar -xf redis.tar.gz -C redis --strip-components=1 \
@@ -114,6 +116,17 @@ RUN \
       && make \
       && make install \
       && echo -e "extension=redis.so" >> ${PHP_DIR}/etc/php.ini \
+      \
+#INSTALL MCRYPT
+      && wget -O mcrypt.tar.gz $PECL_MCRYPT_URL \
+      && mkdir mcrypt \
+      && tar -xf mcrypt.tar.gz -C mcrypt --strip-components=1 \
+      && cd mcrypt \
+      && ${PHP_DIR}/bin/phpize \
+      && ./configure --with-php-config=${PHP_DIR}/bin/php-config \
+      && make \
+      && make install \
+      && echo -e "extension=mcrypt.so" >> ${PHP_DIR}/etc/php.ini \
       \
 ######################################################################################move install file
       && cd \
