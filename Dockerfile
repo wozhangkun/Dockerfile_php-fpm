@@ -28,7 +28,7 @@ RUN \
       && tar -xf swoole.tar.gz -C swoole --strip-components=1 \
       && cd swoole \
       && /usr/local/php/bin/phpize \
-      && ./configure --with-php-config=/usr/local/php/bin/php-config --enable-openssl --enable-http2 --enable-thread --enable-swoole \
+      && ./configure --with-php-config=/usr/local/php/bin/php-config --enable-openssl --enable-http2 --enable-swoole \
       && make \
       && make install  \
       && echo -e "extension=swoole.so" >> /usr/local/php/etc/php.ini \
